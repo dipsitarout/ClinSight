@@ -205,6 +205,7 @@ cd clinsight-ai
 
 ### 2. Create a Virtual Environment
 
+
 ```bash
 python -m venv venv
 
