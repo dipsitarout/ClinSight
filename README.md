@@ -701,11 +701,6 @@ Planned direction: strict-schema database, real RBAC, persistent vector DB, real
 
 ---
 
-### Related Codebases
-
-- ClinSight → https://github.com/dipsitarout/ClinSight
-- GLITCHCON Team 09 → https://github.com/sseth345/GLITCHCON_team09
-
 ### License
 
 See the repository for applicable project/license information.
