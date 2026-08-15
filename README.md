@@ -60,74 +60,92 @@ Think of it as a **digital hospital team**: a doctor talks to the Flutter app, t
 
 ## 🏗️ High-Level Architecture
 
-ClinSight is organized into **four layers** that sit on top of each other — a client layer, an API layer, an intelligence layer, and a data/AI layer at the bottom. Every request flows top to bottom; every audit-worthy action also fans out sideways into the ledger.
+ClinSight flows through **five sequential stages**, top to bottom. Every request starts with the doctor and ends back at the doctor's screen; the audit ledger sits off to the side, quietly logging every clinical action as it happens.
 
 ```mermaid
 flowchart TB
-    Doctor(["👨‍⚕️ Doctor / Hospital Staff"])
+    Doctor(["👨‍⚕️ STEP 0\nDoctor / Hospital Staff"])
 
-    Doctor --> Client
+    Doctor --> UI
 
-    subgraph Client["📱 LAYER 1 — FLUTTER CLIENT"]
-        direction LR
-        UI["Screens & Widgets"] --> State["AppState\n(Provider)"] --> API["ClinSightApiService"] --> HTTPClient["ApiClient\n(HTTP wrapper)"]
+    subgraph S1["📱 STEP 1 — FLUTTER CLIENT"]
+        UI["Screens & Widgets"]
+        UI --> State["AppState (Provider)"]
+        State --> API["ClinSightApiService"]
+        API --> HTTPClient["ApiClient (HTTP wrapper)"]
     end
 
-    Client -- "REST / JSON over HTTP" --> Backend
+    HTTPClient -- "REST / JSON\nover HTTP" --> Routes
 
-    subgraph Backend["⚙️ LAYER 2 — NODE.JS / EXPRESS API"]
-        direction LR
+    subgraph S2["⚙️ STEP 2 — EXPRESS API"]
         Routes["REST Routes"]
-        WhatsApp["WhatsApp Webhook"]
+        WA["WhatsApp Webhook"]
     end
 
-    Routes --> Intelligence
-    WhatsApp --> Intelligence
+    Routes --> Tools
+    Routes --> Context
+    Routes --> RAG
+    Routes --> Agents
+    WA --> Agents
 
-    subgraph Intelligence["🧩 LAYER 3 — INTELLIGENCE"]
-        direction LR
+    subgraph S3["🧩 STEP 3 — INTELLIGENCE"]
         Tools["Deterministic\nPatient Tools"]
         Context["Patient Context\nNormalizer"]
         RAG["RAG Doctor\nAgent"]
         Agents["Specialized\nAgents ×10"]
     end
 
-    Tools --> Data
-    Context --> Data
-    RAG --> AI
-    Agents --> AI
+    Tools --> CaseJSON
+    Tools --> Clinical
+    Tools --> DrugDB
+    Context --> Dataset
+    Context --> Mongo
+    RAG --> Vectra
+    Agents --> Gemini
+    Agents --> Groq
+    Agents --> Claude
+    Agents --> Tesseract
 
-    subgraph Data["🗄️ LAYER 4a — KNOWLEDGE"]
-        direction LR
-        CaseJSON["Case-sheet\nJSON"]
-        Dataset["Dataset\nJSON files"]
-        Mongo["Optional\nMongoDB"]
-        Clinical["Clinical\nGuidelines"]
-        DrugDB["Drug\nInteraction DB"]
-    end
-
-    subgraph AI["🧠 LAYER 4b — AI PROVIDERS"]
-        direction LR
-        Vectra["Vectra\nVector Index"]
+    subgraph S4["🗄️ STEP 4 — KNOWLEDGE & AI"]
+        CaseJSON["Case-sheet JSON"]
+        Dataset["Dataset JSON files"]
+        Mongo["Optional MongoDB"]
+        Clinical["Clinical Guidelines"]
+        DrugDB["Drug Interaction DB"]
+        Vectra["Vectra Vector Index"]
         Gemini["Gemini"]
         Groq["Groq / Llama"]
-        Claude["Anthropic\nClaude"]
-        Tesseract["Tesseract\nOCR"]
+        Claude["Anthropic Claude"]
+        Tesseract["Tesseract OCR"]
     end
 
-    Intelligence -.->|"clinical actions"| Audit["🔗 Audit Ledger\n(hash-linked)"]
-    Audit -.->|"Socket.IO\nlive updates"| Client
+    CaseJSON -.-> Response
+    Dataset -.-> Response
+    Mongo -.-> Response
+    Vectra -.-> Response
+    Gemini -.-> Response
+    Groq -.-> Response
+    Claude -.-> Response
+    Tesseract -.-> Response
+
+    Response(["✅ STEP 5\nStructured response → back to Flutter UI"])
+
+    Agents -.->|"clinical action"| Audit["🔗 Audit Ledger\n(hash-linked)"]
+    Routes -.->|"clinical action"| Audit
+    Audit -.->|"Socket.IO\nlive updates"| UI
 ```
 
 **How to read it:**
 
-| Layer | Role | Key pieces |
+| Step | Role | Key pieces |
 |---|---|---|
-| **1 · Client** | What the doctor sees and touches | Flutter screens, state, typed API service |
-| **2 · API** | Single entry point for every request | Express REST routes + WhatsApp webhook |
+| **0 · Doctor** | Triggers the request | Any action inside the app |
+| **1 · Flutter Client** | What the doctor sees and touches | Screens → AppState → typed API service → HTTP wrapper |
+| **2 · Express API** | Single entry point for every request | REST routes + WhatsApp webhook |
 | **3 · Intelligence** | Decides *how* to answer — rules or reasoning | Deterministic tools, context normalizer, RAG, 10 specialized agents |
 | **4 · Knowledge & AI** | Where facts and reasoning power come from | JSON/Mongo data sources · Vectra · Gemini/Groq/Claude · Tesseract |
-| **Cross-cutting** | Traceability, independent of the layer above | Hash-linked audit ledger + live Socket.IO updates back to the client |
+| **5 · Response** | Answer travels back to the doctor | Structured JSON → Flutter UI rebuild |
+| **Side channel** | Traceability, running alongside every step | Hash-linked audit ledger + live Socket.IO updates to the client |
 
 ---
 
@@ -700,6 +718,11 @@ flowchart TB
 Planned direction: strict-schema database, real RBAC, persistent vector DB, real embedding model, background OCR queues, a model gateway with retries/fallback, prompt versioning, PHI encryption, persistent audit storage, automated evaluation, monitoring/tracing, rate limiting, and clinical safety review.
 
 ---
+
+### Related Codebases
+
+- ClinSight → https://github.com/dipsitarout/ClinSight
+- GLITCHCON Team 09 → https://github.com/sseth345/GLITCHCON_team09
 
 ### License
 
