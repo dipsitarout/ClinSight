@@ -60,79 +60,55 @@ Think of it as a **digital hospital team**: a doctor talks to the Flutter app, t
 
 ## 🏗️ High-Level Architecture
 
-ClinSight flows through **five sequential stages**, top to bottom. Every request starts with the doctor and ends back at the doctor's screen; the audit ledger sits off to the side, quietly logging every clinical action as it happens.
+ClinSight flows through **five sequential stages**, top to bottom. Each stage hands off to exactly one next stage — no crossed wires. The audit ledger is the only side-channel, branching off once and reporting back once.
 
 ```mermaid
 flowchart TB
-    Doctor(["👨‍⚕️ STEP 0\nDoctor / Hospital Staff"])
-
-    Doctor --> UI
+    Doctor(["👨‍⚕️ STEP 0 — Doctor / Hospital Staff"])
+    Doctor --> S1
 
     subgraph S1["📱 STEP 1 — FLUTTER CLIENT"]
+        direction TB
         UI["Screens & Widgets"]
-        UI --> State["AppState (Provider)"]
-        State --> API["ClinSightApiService"]
-        API --> HTTPClient["ApiClient (HTTP wrapper)"]
+        State["AppState (Provider)"]
+        API["ClinSightApiService"]
+        HTTPClient["ApiClient (HTTP wrapper)"]
+        UI --> State --> API --> HTTPClient
     end
 
-    HTTPClient -- "REST / JSON\nover HTTP" --> Routes
+    S1 --> S2
 
     subgraph S2["⚙️ STEP 2 — EXPRESS API"]
+        direction TB
         Routes["REST Routes"]
         WA["WhatsApp Webhook"]
     end
 
-    Routes --> Tools
-    Routes --> Context
-    Routes --> RAG
-    Routes --> Agents
-    WA --> Agents
+    S2 --> S3
 
     subgraph S3["🧩 STEP 3 — INTELLIGENCE"]
-        Tools["Deterministic\nPatient Tools"]
-        Context["Patient Context\nNormalizer"]
-        RAG["RAG Doctor\nAgent"]
-        Agents["Specialized\nAgents ×10"]
+        direction TB
+        Tools["Deterministic Patient Tools"]
+        Context["Patient Context Normalizer"]
+        RAG["RAG Doctor Agent"]
+        Agents["Specialized Agents ×10"]
     end
 
-    Tools --> CaseJSON
-    Tools --> Clinical
-    Tools --> DrugDB
-    Context --> Dataset
-    Context --> Mongo
-    RAG --> Vectra
-    Agents --> Gemini
-    Agents --> Groq
-    Agents --> Claude
-    Agents --> Tesseract
+    S3 --> S4
 
     subgraph S4["🗄️ STEP 4 — KNOWLEDGE & AI"]
-        CaseJSON["Case-sheet JSON"]
-        Dataset["Dataset JSON files"]
-        Mongo["Optional MongoDB"]
-        Clinical["Clinical Guidelines"]
-        DrugDB["Drug Interaction DB"]
-        Vectra["Vectra Vector Index"]
-        Gemini["Gemini"]
-        Groq["Groq / Llama"]
-        Claude["Anthropic Claude"]
-        Tesseract["Tesseract OCR"]
+        direction TB
+        KnowledgeRow["Case JSON · Dataset · MongoDB · Guidelines · Drug DB"]
+        AIRow["Vectra · Gemini · Groq/Llama · Claude · Tesseract"]
+        KnowledgeRow --> AIRow
     end
 
-    CaseJSON -.-> Response
-    Dataset -.-> Response
-    Mongo -.-> Response
-    Vectra -.-> Response
-    Gemini -.-> Response
-    Groq -.-> Response
-    Claude -.-> Response
-    Tesseract -.-> Response
+    S4 --> S5
 
-    Response(["✅ STEP 5\nStructured response → back to Flutter UI"])
+    S5(["✅ STEP 5 — Structured response → back to Flutter UI"])
 
-    Agents -.->|"clinical action"| Audit["🔗 Audit Ledger\n(hash-linked)"]
-    Routes -.->|"clinical action"| Audit
-    Audit -.->|"Socket.IO\nlive updates"| UI
+    S2 --> Audit["🔗 Audit Ledger (hash-linked)"]
+    Audit --> S1
 ```
 
 **How to read it:**
@@ -143,9 +119,9 @@ flowchart TB
 | **1 · Flutter Client** | What the doctor sees and touches | Screens → AppState → typed API service → HTTP wrapper |
 | **2 · Express API** | Single entry point for every request | REST routes + WhatsApp webhook |
 | **3 · Intelligence** | Decides *how* to answer — rules or reasoning | Deterministic tools, context normalizer, RAG, 10 specialized agents |
-| **4 · Knowledge & AI** | Where facts and reasoning power come from | JSON/Mongo data sources · Vectra · Gemini/Groq/Claude · Tesseract |
+| **4 · Knowledge & AI** | Where facts and reasoning power come from | JSON/Mongo data sources → Vectra · Gemini/Groq/Claude · Tesseract |
 | **5 · Response** | Answer travels back to the doctor | Structured JSON → Flutter UI rebuild |
-| **Side channel** | Traceability, running alongside every step | Hash-linked audit ledger + live Socket.IO updates to the client |
+| **Side channel** | Traceability, running alongside every step | Express API logs each clinical action to the hash-linked audit ledger, which pushes live Socket.IO updates back to the client |
 
 ---
 
@@ -246,27 +222,21 @@ Default backend port: **`4000`**
 ```mermaid
 flowchart TB
     Main["main.dart"]
-    State["AppState\nChangeNotifier / Provider"]
-    API["ClinSightApiService"]
-    Client["ApiClient"]
-    HTTP["package:http"]
-    Backend["Node / Express"]
+    Main --> State["AppState (Provider)"]
 
-    Screens["Screens"]
-    Models["Patient models"]
-    Widgets["Reusable widgets"]
-    Theme["Theme"]
+    subgraph Screens["Screens Layer"]
+        direction TB
+        Screens1["Screens"]
+        Models["Patient Models"]
+        Widgets["Reusable Widgets"]
+        Theme["Theme"]
+    end
 
-    Main --> State
-    Main --> Theme
     State --> Screens
-    Screens --> State
-    State --> API
-    API --> Client
-    Client --> HTTP
-    HTTP --> Backend
-    Models --> Screens
-    Widgets --> Screens
+    Screens --> API["ClinSightApiService"]
+    API --> Client["ApiClient"]
+    Client --> HTTP["package:http"]
+    HTTP --> Backend["Node / Express Backend"]
 ```
 
 | File | Responsibility |
@@ -313,24 +283,29 @@ sequenceDiagram
 ClinSight currently supports **three** parallel data paths:
 
 ```mermaid
-flowchart LR
-    Case["Small case-sheet JSON\npatient_P001.json"]
-    Dataset["Generated dataset\npatients.json / visits.json\nmedications.json / labs.json"]
-    Mongo["Optional MongoDB"]
+flowchart TB
+    subgraph Sources["Data Sources"]
+        direction TB
+        Case["Case-sheet JSON\npatient_P001.json"]
+        Dataset["Generated Dataset\npatients / visits / meds / labs"]
+        Mongo["Optional MongoDB"]
+    end
 
-    Tools["patientTools.js"]
-    Context["patientContext.js"]
-    Routes["REST routes"]
-    Agents["Agents / RAG"]
+    Sources --> Normalize
 
-    Case --> Tools
-    Dataset --> Tools
-    Dataset --> Context
-    Mongo --> Context
+    subgraph Normalize["Normalization Layer"]
+        direction TB
+        Tools["patientTools.js"]
+        Context["patientContext.js"]
+    end
 
-    Tools --> Routes
-    Context --> Agents
-    Routes --> Agents
+    Normalize --> Consumers
+
+    subgraph Consumers["Consumers"]
+        direction TB
+        Routes["REST Routes"]
+        Agents["Agents / RAG"]
+    end
 ```
 
 | Source | Contains | Notes |
@@ -373,32 +348,30 @@ If retrieval returns nothing useful, the system falls back to deterministic pati
 ```mermaid
 flowchart TB
     Query["Doctor / System Request"]
+    Query --> AgentLayer
 
-    Query --> RAG["RAG Doctor Agent"]
-    Query --> Analysis["Clinical Analysis Agent"]
-    Query --> Triage["Triage Agent"]
-    Query --> Reception["Receptionist Agent"]
-    Query --> Nutrition["Nutrition Agent"]
-    Query --> Second["Second Opinion Agent"]
-    Query --> OCR["OCR Agent"]
-    Query --> Ingestion["Ingestion Agent"]
-    Query --> Transfer["Transfer Agent"]
-    Query --> Orchestrator["Orchestrator Agent"]
+    subgraph AgentLayer["Specialized Agents"]
+        direction TB
+        Deterministic["Deterministic\nIngestion · Transfer · Orchestrator"]
+        GroqAgents["Groq / Llama\nRAG · Triage · Receptionist · Nutrition"]
+        GeminiAgents["Gemini\nAnalysis · OCR"]
+        ClaudeAgents["Claude\nSecond Opinion"]
+    end
 
-    Analysis --> Gemini["Gemini"]
-    OCR --> Tesseract["Tesseract"]
-    OCR --> Gemini
-    RAG --> Groq["Groq / Llama"]
-    Triage --> Groq
-    Reception --> Groq
-    Nutrition --> Groq
-    Second --> Claude["Anthropic Claude"]
-    Transfer --> Analysis
-    Orchestrator --> OCR
-    Orchestrator --> Ingestion
-    Orchestrator --> Analysis
-    Orchestrator --> Triage
-    Orchestrator --> Transfer
+    AgentLayer --> ModelLayer
+
+    subgraph ModelLayer["Model / Tool Providers"]
+        direction TB
+        Groq["Groq / Llama API"]
+        Gemini["Google Gemini"]
+        Claude["Anthropic Claude"]
+        Tesseract["Tesseract OCR"]
+    end
+
+    GroqAgents -.-> Groq
+    GeminiAgents -.-> Gemini
+    GeminiAgents -.-> Tesseract
+    ClaudeAgents -.-> Claude
 ```
 
 | Agent | Purpose | Model |
@@ -694,35 +667,27 @@ This is a **hackathon/demo architecture** — several parts are intentionally si
 ```mermaid
 flowchart TB
     Client["Flutter / Web Client"]
-    Gateway["API Gateway"]
-    Auth["Identity + RBAC"]
-    Backend["Clinical Orchestration Service"]
-    DB["Encrypted Clinical DB"]
-    Vector["Production Vector DB"]
-    Queue["Job Queue"]
-    LLM["Model Gateway"]
-    Audit["Persistent Tamper-Evident Audit Store"]
-    Observability["Logs + Metrics + Tracing"]
+    Client --> Gateway["API Gateway"]
+    Gateway --> Auth["Identity + RBAC"]
+    Auth --> Backend["Clinical Orchestration Service"]
 
-    Client --> Gateway
-    Gateway --> Auth
-    Auth --> Backend
-    Backend --> DB
-    Backend --> Vector
-    Backend --> Queue
-    Backend --> LLM
-    Backend --> Audit
-    Backend --> Observability
+    Backend --> Platform
+
+    subgraph Platform["Supporting Platform"]
+        direction TB
+        DB["Encrypted Clinical DB"]
+        Vector["Production Vector DB"]
+        Queue["Job Queue"]
+        LLM["Model Gateway"]
+        Observability["Logs + Metrics + Tracing"]
+    end
+
+    Backend --> Audit["Persistent Tamper-Evident Audit Store"]
 ```
 
 Planned direction: strict-schema database, real RBAC, persistent vector DB, real embedding model, background OCR queues, a model gateway with retries/fallback, prompt versioning, PHI encryption, persistent audit storage, automated evaluation, monitoring/tracing, rate limiting, and clinical safety review.
 
 ---
-
-### Related Codebases
-
-- ClinSight → https://github.com/dipsitarout/ClinSight
-- GLITCHCON Team 09 → https://github.com/sseth345/GLITCHCON_team09
 
 ### License
 
