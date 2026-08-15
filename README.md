@@ -21,7 +21,6 @@
 ## 📖 Table of Contents
 
 - [What is ClinSight?](#-what-is-clinsight)
-- [Documentation Honesty Notice](#-documentation-honesty-notice)
 - [High-Level Architecture](#️-high-level-architecture)
 - [Repository Structure](#-repository-structure)
 - [Backend Startup Flow](#-backend-startup-flow)
@@ -36,8 +35,6 @@
 - [Testing](#-testing)
 - [Current Limitations](#️-current-limitations)
 - [Production Roadmap](#-production-roadmap)
-- [FAQ / Interview Cheat Sheet](#-faq--cheat-sheet)
-- [Project Status](#-project-status)
 
 ---
 
@@ -61,95 +58,76 @@ Think of it as a **digital hospital team**: a doctor talks to the Flutter app, t
 
 ---
 
-## ⚠️ Documentation Honesty Notice
-
-This README documents the **actual, checked-in codebase** — not older marketing-style project claims. A few things have changed (or were never quite what earlier docs said):
-
-| Topic | Older docs claimed | What's actually in the repo |
-|---|---|---|
-| Frontend | Streamlit | **Flutter** |
-| Backend language | Python | **Node.js / JavaScript** |
-| Vector DB | FAISS | **Vectra LocalIndex** |
-| Embeddings | Sentence Transformers (`all-MiniLM-L6-v2`) | **Custom 128-dim hashed word-frequency vectorization** |
-| Agent count | 7 agents | Multiple specialized modules: analysis, RAG, triage, OCR, ingestion, nutrition, receptionist, second opinion, transfer, orchestration |
-| Database | "JSON-oriented" | JSON/case-sheet files + generated dataset files + **optional** MongoDB |
-| LLMs | Generic | **Gemini**, **Groq/Llama**, and **Anthropic Claude** — used by different modules |
-| Audit | "Blockchain" | A custom **in-memory SHA-256 hash-linked audit ledger** — not a public blockchain |
-| Accuracy | 92% (often quoted) | **No evaluation pipeline exists** that measures 92% system accuracy |
-
-> 🔍 **On the "92%" figure:** it exists in the repo, but it's tied to a clinical **SpO₂ guideline threshold** in the data — not a measured model accuracy score. Don't cite it as accuracy unless a real benchmark is run.
-
----
-
 ## 🏗️ High-Level Architecture
+
+ClinSight is organized into **four layers** that sit on top of each other — a client layer, an API layer, an intelligence layer, and a data/AI layer at the bottom. Every request flows top to bottom; every audit-worthy action also fans out sideways into the ledger.
 
 ```mermaid
 flowchart TB
-    Doctor["👨‍⚕️ Doctor / Hospital Staff"]
+    Doctor(["👨‍⚕️ Doctor / Hospital Staff"])
 
-    subgraph Client["📱 Flutter Client"]
-        UI["Screens & Widgets"]
-        State["AppState / Provider"]
-        API["ClinSightApiService"]
-        HTTPClient["ApiClient"]
+    Doctor --> Client
+
+    subgraph Client["📱 LAYER 1 — FLUTTER CLIENT"]
+        direction LR
+        UI["Screens & Widgets"] --> State["AppState\n(Provider)"] --> API["ClinSightApiService"] --> HTTPClient["ApiClient\n(HTTP wrapper)"]
     end
 
-    subgraph Backend["⚙️ Node.js / Express Backend"]
-        Routes["REST API Routes"]
-        Tools["Deterministic Patient Tools"]
-        Context["Patient Context Layer"]
-        RAG["RAG Doctor Agent"]
-        Agents["Specialized Agents"]
-        Audit["Audit Ledger"]
+    Client -- "REST / JSON over HTTP" --> Backend
+
+    subgraph Backend["⚙️ LAYER 2 — NODE.JS / EXPRESS API"]
+        direction LR
+        Routes["REST Routes"]
         WhatsApp["WhatsApp Webhook"]
     end
 
-    subgraph Data["🗄️ Data Sources"]
-        CaseJSON["Case-sheet JSON files"]
-        Dataset["Dataset JSON files"]
-        Mongo["Optional MongoDB"]
-        Clinical["Clinical Guidelines"]
-        DrugDB["Drug Interaction DB"]
+    Routes --> Intelligence
+    WhatsApp --> Intelligence
+
+    subgraph Intelligence["🧩 LAYER 3 — INTELLIGENCE"]
+        direction LR
+        Tools["Deterministic\nPatient Tools"]
+        Context["Patient Context\nNormalizer"]
+        RAG["RAG Doctor\nAgent"]
+        Agents["Specialized\nAgents ×10"]
     end
 
-    subgraph AI["🧠 AI / Retrieval"]
-        Vectra["Vectra Local Vector Index"]
-        Gemini["Google Gemini"]
+    Tools --> Data
+    Context --> Data
+    RAG --> AI
+    Agents --> AI
+
+    subgraph Data["🗄️ LAYER 4a — KNOWLEDGE"]
+        direction LR
+        CaseJSON["Case-sheet\nJSON"]
+        Dataset["Dataset\nJSON files"]
+        Mongo["Optional\nMongoDB"]
+        Clinical["Clinical\nGuidelines"]
+        DrugDB["Drug\nInteraction DB"]
+    end
+
+    subgraph AI["🧠 LAYER 4b — AI PROVIDERS"]
+        direction LR
+        Vectra["Vectra\nVector Index"]
+        Gemini["Gemini"]
         Groq["Groq / Llama"]
-        Claude["Anthropic Claude"]
-        Tesseract["Tesseract OCR"]
+        Claude["Anthropic\nClaude"]
+        Tesseract["Tesseract\nOCR"]
     end
 
-    Doctor --> UI
-    UI --> State
-    State --> API
-    API --> HTTPClient
-    HTTPClient --> Routes
-
-    Routes --> Tools
-    Routes --> Context
-    Routes --> RAG
-    Routes --> Agents
-    Routes --> Audit
-    Routes --> WhatsApp
-
-    Tools --> CaseJSON
-    Tools --> Dataset
-    Tools --> Clinical
-    Tools --> DrugDB
-    Context --> Mongo
-    Context --> Dataset
-    Context --> CaseJSON
-
-    RAG --> Vectra
-    RAG --> Groq
-    Agents --> Gemini
-    Agents --> Groq
-    Agents --> Claude
-    Agents --> Tesseract
-
-    Audit --> Client
+    Intelligence -.->|"clinical actions"| Audit["🔗 Audit Ledger\n(hash-linked)"]
+    Audit -.->|"Socket.IO\nlive updates"| Client
 ```
+
+**How to read it:**
+
+| Layer | Role | Key pieces |
+|---|---|---|
+| **1 · Client** | What the doctor sees and touches | Flutter screens, state, typed API service |
+| **2 · API** | Single entry point for every request | Express REST routes + WhatsApp webhook |
+| **3 · Intelligence** | Decides *how* to answer — rules or reasoning | Deterministic tools, context normalizer, RAG, 10 specialized agents |
+| **4 · Knowledge & AI** | Where facts and reasoning power come from | JSON/Mongo data sources · Vectra · Gemini/Groq/Claude · Tesseract |
+| **Cross-cutting** | Traceability, independent of the layer above | Hash-linked audit ledger + live Socket.IO updates back to the client |
 
 ---
 
@@ -722,49 +700,6 @@ flowchart TB
 Planned direction: strict-schema database, real RBAC, persistent vector DB, real embedding model, background OCR queues, a model gateway with retries/fallback, prompt versioning, PHI encryption, persistent audit storage, automated evaluation, monitoring/tracing, rate limiting, and clinical safety review.
 
 ---
-
-## ❓ FAQ / Cheat Sheet
-
-<details>
-<summary><b>What is ClinSight?</b></summary>
-An agentic clinical-intelligence platform giving doctors patient-specific summaries, retrieval, risk flags, lab trends, drug-interaction checks, document ingestion, triage, and specialist handoff.
-</details>
-
-<details>
-<summary><b>What's the architecture, one line?</b></summary>
-Flutter → Node/Express → deterministic tools + RAG + specialized agents → LLM providers → structured response, with a hash-linked audit ledger and Socket.IO updates running alongside.
-</details>
-
-<details>
-<summary><b>Which embedding model / vector DB?</b></summary>
-No Sentence-Transformer model — a custom 128-dim hashed word-frequency vectorizer, stored in <b>Vectra LocalIndex</b>.
-</details>
-
-<details>
-<summary><b>Which LLMs, and why so many?</b></summary>
-Gemini (analysis/OCR structuring), Groq/Llama (RAG/triage/conversation), Claude (second opinion). Different workflows need different latency/reasoning/extraction trade-offs, so provider choice is isolated per agent.
-</details>
-
-<details>
-<summary><b>Is everything AI-driven?</b></summary>
-No — drug interactions, patient retrieval, lab trends, and guideline lookup are deterministic. LLMs are used only where natural-language reasoning adds real value.
-</details>
-
-<details>
-<summary><b>What happens if an LLM or RAG call fails?</b></summary>
-Agents catch errors and fall back to deterministic summaries or return a structured error. Triage additionally falls back to "manual review required."
-</details>
-
-<details>
-<summary><b>Did the system actually hit 92% accuracy?</b></summary>
-No reliable evaluation pipeline in the repo establishes that figure — it traces back to a clinical SpO₂ guideline threshold, not a measured accuracy score.
-</details>
-
----
-
-## 📌 Project Status
-
-ClinSight is a **hackathon/prototype clinical-intelligence platform**. It demonstrates the architecture and engineering ideas behind an agentic healthcare assistant, but it should **not** be deployed as an autonomous clinical decision-making system without substantial security, privacy, reliability, evaluation, and clinical-validation work.
 
 ### Related Codebases
 
