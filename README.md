@@ -1,373 +1,784 @@
 <div align="center">
 
-<br/>
+# 🏥 ClinSight AI
 
-```
- ██████╗██╗     ██╗███╗   ██╗███████╗██╗ ██████╗ ██╗  ██╗████████╗     █████╗ ██╗
-██╔════╝██║     ██║████╗  ██║██╔════╝██║██╔════╝ ██║  ██║╚══██╔══╝    ██╔══██╗██║
-██║     ██║     ██║██╔██╗ ██║███████╗██║██║  ███╗███████║   ██║       ███████║██║
-██║     ██║     ██║██║╚██╗██║╚════██║██║██║   ██║██╔══██║   ██║       ██╔══██║██║
-╚██████╗███████╗██║██║ ╚████║███████║██║╚██████╔╝██║  ██║   ██║       ██║  ██║██║
- ╚═════╝╚══════╝╚═╝╚═╝  ╚═══╝╚══════╝╚═╝ ╚═════╝ ╚═╝  ╚═╝   ╚═╝       ╚═╝  ╚═╝╚═╝
-```
+### Clinical Intelligence & Multi-Agent Patient Assistant
 
-**Clinical Intelligence, Accelerated.**
+*A digital hospital team — not just another chatbot.*
 
-<br/>
-
-> 🏆 **Domain Winners** — GLITCHCON 2.0 · National Hackathon at vellore institute of technology
-> HackerRank × MellonAI × Kathir Memorial Hospital × Arpina Solutions
-> **March 9–10, 2026 · MG Auditorium, VIT**
-
-<br/>
-
-[![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
-[![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)](https://streamlit.io/)
-[![FAISS](https://img.shields.io/badge/FAISS-Vector_DB-0064b0?style=for-the-badge&logo=meta&logoColor=white)](https://faiss.ai/)
-[![SentenceTransformers](https://img.shields.io/badge/Sentence_Transformers-Embeddings-orange?style=for-the-badge&logo=huggingface&logoColor=white)](https://sbert.net/)
-[![Blockchain](https://img.shields.io/badge/Blockchain-Audit_Trail-121D33?style=for-the-badge&logo=ethereum&logoColor=white)]()
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)](LICENSE)
-
-<br/>
-
-[![Live Demo](https://img.shields.io/badge/🚀%20Live%20Demo-Try%20ClinSight-00c853?style=for-the-badge)](https://lnkd.in/gYH92mzC)
-[![GitHub Repo](https://img.shields.io/badge/⭐%20Star%20on%20GitHub-Source%20Code-24292e?style=for-the-badge&logo=github)](https://lnkd.in/gXkV47Ef)
-
-<br/>
+[![Node.js](https://img.shields.io/badge/Backend-Node.js%20%2F%20Express-339933?logo=node.js&logoColor=white)](#)
+[![Flutter](https://img.shields.io/badge/Frontend-Flutter-02569B?logo=flutter&logoColor=white)](#)
+[![Vectra](https://img.shields.io/badge/Vector%20Store-Vectra%20LocalIndex-8A2BE2)](#)
+[![Gemini](https://img.shields.io/badge/LLM-Gemini-4285F4?logo=googlegemini&logoColor=white)](#)
+[![Groq](https://img.shields.io/badge/LLM-Groq%20%2F%20Llama-F55036)](#)
+[![Claude](https://img.shields.io/badge/LLM-Anthropic%20Claude-D97757)](#)
+[![License](https://img.shields.io/badge/status-hackathon%20prototype-yellow)](#project-status)
 
 </div>
 
 ---
 
+## 📖 Table of Contents
 
-
-
-## 🧬 What is ClinSight AI?
-
-**ClinSight AI** is an **agentic clinical intelligence platform** that eliminates one of the most costly inefficiencies in modern hospitals:
-
-> *Doctors walking into consultations without structured patient context.*
-
-In busy hospital environments, a physician may manage hundreds of patients daily — each with dense, fragmented histories buried across case sheets, visit logs, lab reports, and prescription records. ClinSight deploys a **multi-agent AI pipeline** that automatically analyzes patient history, detects clinical risks, and generates a **60-second clinical brief** before the doctor even begins.
-
-This isn't another AI chatbot. It's an **orchestrated clinical intelligence layer** — purpose-built for healthcare.
-
----
-
-## 🏆 Recognition
-
-<table>
-  <tr>
-    <td><b>Event</b></td>
-    <td>GLITCHCON 2.0 — National-Level Hackathon</td>
-  </tr>
-  <tr>
-    <td><b>Result</b></td>
-    <td>🥇 Domain Winners</td>
-  </tr>
-  <tr>
-    <td><b>Organized by</b></td>
-    <td>HackerRank · MellonAI · Kathir Memorial Hospital · Arpina Solutions · WeLe · BITUMEN · ECDS · VITAA</td>
-  </tr>
-  <tr>
-    <td><b>Venue & Date</b></td>
-    <td>MG Auditorium, VIT — March 9–10, 2026</td>
-  </tr>
-</table>
+- [What is ClinSight?](#-what-is-clinsight)
+- [Documentation Honesty Notice](#-documentation-honesty-notice)
+- [High-Level Architecture](#️-high-level-architecture)
+- [Repository Structure](#-repository-structure)
+- [Backend Startup Flow](#-backend-startup-flow)
+- [Flutter Client Architecture](#-flutter-client-architecture)
+- [Data Architecture](#-data-architecture)
+- [RAG Pipeline](#-retrieval-augmented-generation-rag)
+- [Specialized Agents](#-specialized-agents)
+- [Audit Ledger ("Blockchain")](#-audit-ledger-blockchain-style-hash-chain)
+- [REST API Reference](#-rest-api-reference)
+- [Environment Variables](#-environment-variables)
+- [Getting Started](#-getting-started)
+- [Testing](#-testing)
+- [Current Limitations](#️-current-limitations)
+- [Production Roadmap](#-production-roadmap)
+- [FAQ / Interview Cheat Sheet](#-faq--cheat-sheet)
+- [Project Status](#-project-status)
 
 ---
 
-## 🚨 Problem Statement
+## 🩺 What is ClinSight?
 
-In busy clinical environments, doctors routinely manage hundreds of patients — each with dense, unstructured medical histories buried in case sheets, visit logs, and diagnostic reports.
+**ClinSight AI** is a clinical-intelligence platform that sits between hospital staff and fragmented patient records. It combines:
 
-| Pain Point | Reality |
-|---|---|
-| ⏱️ **Time-consuming** | Manually scrolling through records wastes critical minutes during consultations |
-| 🔍 **Keyword-limited** | Traditional search misses semantic context — "fatigue" won't surface "chronic tiredness" |
-| 🧩 **Fragmented** | Patient data is scattered across diagnoses, prescriptions, lab reports, and visit notes |
-| ⚠️ **Error-prone** | Cognitive overload leads to missed drug interactions and overlooked patterns |
-| 🔒 **Unaudited** | No traceable log of who accessed what clinical insight, when, and why |
+- 📱 A **Flutter** client
+- ⚙️ A **Node.js / Express** backend
+- 🧮 Deterministic clinical tools
+- 🔎 Retrieval over patient records (RAG)
+- 🧠 Multiple LLM providers
+- 📄 OCR-based document ingestion
+- 🔁 Specialist-transfer workflows
+- 💬 WhatsApp integration
+- 🔗 A hash-linked audit ledger
 
-> **There is no intelligent layer between the doctor and the data. ClinSight is that layer.**
+Think of it as a **digital hospital team**: a doctor talks to the Flutter app, the app talks to the backend, and the backend pulls patient data, runs deterministic tools and/or specialized AI agents, retrieves relevant context from a local vector index, asks an LLM to interpret it, and returns a structured, clinically-framed answer.
 
----
-
-## 💡 Solution Overview
-
-**ClinSight AI** bridges this gap by deploying a **multi-agent AI infrastructure** over patient medical records. Doctors query the system in plain English — by name, disease, or symptom — and receive a fully structured clinical brief in under 60 seconds.
-
-The platform uses **Retrieval-Augmented Generation (RAG)**: patient records are embedded as semantic vectors, stored in a FAISS index, and retrieved via similarity search. A pipeline of **7 specialized agents** then handles analysis, triage, OCR ingestion, drug interaction detection, second-opinion generation, and more — all grounded in real patient data.
+> **Mental model:** Flutter asks → Express routes → tools retrieve → RAG retrieves relevant context → specialized agents process → LLMs generate → backend returns → the hash-linked audit ledger records the action.
 
 ---
 
-## 🤖 Multi-Agent Architecture
+## ⚠️ Documentation Honesty Notice
 
-ClinSight deploys **7 specialized AI agents**, each owning a distinct part of the clinical intelligence pipeline:
+This README documents the **actual, checked-in codebase** — not older marketing-style project claims. A few things have changed (or were never quite what earlier docs said):
 
-| Agent | Role |
-|---|---|
-| 🔍 **Retrieval Agent** | Semantic search across patient records using FAISS vector similarity |
-| 📊 **Analysis Agent** | Structures raw patient data into coherent clinical profiles |
-| ⚠️ **Triage Agent** | Detects high-risk conditions and flags critical patients automatically |
-| 💊 **Drug Interaction Agent** | Cross-references prescriptions for dangerous drug combinations |
-| 🧪 **Lab Trend Agent** | Analyzes lab value trajectories and surfaces anomalies over time |
-| 🔬 **Second Opinion Agent** | Generates evidence-backed differential diagnoses with confidence scores |
-| 📄 **OCR Ingestion Agent** | Parses scanned PDF case sheets into structured patient records |
+| Topic | Older docs claimed | What's actually in the repo |
+|---|---|---|
+| Frontend | Streamlit | **Flutter** |
+| Backend language | Python | **Node.js / JavaScript** |
+| Vector DB | FAISS | **Vectra LocalIndex** |
+| Embeddings | Sentence Transformers (`all-MiniLM-L6-v2`) | **Custom 128-dim hashed word-frequency vectorization** |
+| Agent count | 7 agents | Multiple specialized modules: analysis, RAG, triage, OCR, ingestion, nutrition, receptionist, second opinion, transfer, orchestration |
+| Database | "JSON-oriented" | JSON/case-sheet files + generated dataset files + **optional** MongoDB |
+| LLMs | Generic | **Gemini**, **Groq/Llama**, and **Anthropic Claude** — used by different modules |
+| Audit | "Blockchain" | A custom **in-memory SHA-256 hash-linked audit ledger** — not a public blockchain |
+| Accuracy | 92% (often quoted) | **No evaluation pipeline exists** that measures 92% system accuracy |
+
+> 🔍 **On the "92%" figure:** it exists in the repo, but it's tied to a clinical **SpO₂ guideline threshold** in the data — not a measured model accuracy score. Don't cite it as accuracy unless a real benchmark is run.
 
 ---
 
-## 🏗️ System Architecture
+## 🏗️ High-Level Architecture
 
 ```mermaid
-flowchart TD
-    Doctor([👨‍⚕️ Doctor])
-    Doctor -->|"Search: name · disease · symptom"| UI[🖥️ Streamlit UI]
+flowchart TB
+    Doctor["👨‍⚕️ Doctor / Hospital Staff"]
 
-    subgraph Ingestion["📥 Ingestion Pipeline — runs once on startup"]
-        DS[📂 JSON / PDF Records]
-        DS --> OCR[📄 OCR Ingestion Agent]
-        OCR --> EMB[🤖 Sentence Transformers]
-        EMB --> VDB[(🗄️ FAISS Vector Store)]
+    subgraph Client["📱 Flutter Client"]
+        UI["Screens & Widgets"]
+        State["AppState / Provider"]
+        API["ClinSightApiService"]
+        HTTPClient["ApiClient"]
     end
 
-    UI -->|embed query| VDB
-    VDB -->|top-k matches| RET[🔍 Retrieval Agent]
+    subgraph Backend["⚙️ Node.js / Express Backend"]
+        Routes["REST API Routes"]
+        Tools["Deterministic Patient Tools"]
+        Context["Patient Context Layer"]
+        RAG["RAG Doctor Agent"]
+        Agents["Specialized Agents"]
+        Audit["Audit Ledger"]
+        WhatsApp["WhatsApp Webhook"]
+    end
 
-    RET --> BRANCH{Search type?}
-    BRANCH -->|Name| ANA[📊 Analysis Agent]
-    BRANCH -->|Disease / Symptom| SEL[👥 Patient Selection]
-    SEL -->|doctor picks| ANA
+    subgraph Data["🗄️ Data Sources"]
+        CaseJSON["Case-sheet JSON files"]
+        Dataset["Dataset JSON files"]
+        Mongo["Optional MongoDB"]
+        Clinical["Clinical Guidelines"]
+        DrugDB["Drug Interaction DB"]
+    end
 
-    ANA --> TRI[⚠️ Triage Agent]
-    ANA --> DRUG[💊 Drug Interaction Agent]
-    ANA --> LAB[🧪 Lab Trend Agent]
+    subgraph AI["🧠 AI / Retrieval"]
+        Vectra["Vectra Local Vector Index"]
+        Gemini["Google Gemini"]
+        Groq["Groq / Llama"]
+        Claude["Anthropic Claude"]
+        Tesseract["Tesseract OCR"]
+    end
 
-    TRI & DRUG & LAB --> SOP[🔬 Second Opinion Agent]
-    SOP -->|confidence-scored insights| BRIEF[⚡ 60s Clinical Brief]
-    BRIEF --> BC[🔐 Blockchain Audit Trail]
-    BC --> UI
+    Doctor --> UI
+    UI --> State
+    State --> API
+    API --> HTTPClient
+    HTTPClient --> Routes
 
-    UI -->|structured dashboard + alerts| Doctor
+    Routes --> Tools
+    Routes --> Context
+    Routes --> RAG
+    Routes --> Agents
+    Routes --> Audit
+    Routes --> WhatsApp
+
+    Tools --> CaseJSON
+    Tools --> Dataset
+    Tools --> Clinical
+    Tools --> DrugDB
+    Context --> Mongo
+    Context --> Dataset
+    Context --> CaseJSON
+
+    RAG --> Vectra
+    RAG --> Groq
+    Agents --> Gemini
+    Agents --> Groq
+    Agents --> Claude
+    Agents --> Tesseract
+
+    Audit --> Client
 ```
 
 ---
 
-## ✨ Key Features
+## 📁 Repository Structure
 
-| Feature | Description |
-|---|---|
-| ⚡ **60-Second Clinical Brief** | Full patient context generated instantly on selection — before the consultation begins |
-| 🤖 **7-Agent Pipeline** | Specialized agents for analysis, triage, OCR, drug interactions, lab trends, and second opinions |
-| 🔍 **Semantic Search** | Search by name, disease, or symptom in natural language — not just exact keywords |
-| 💊 **Drug Interaction Detection** | Automatically cross-references the full prescription list for dangerous combinations |
-| 🧪 **Lab Trend Analysis** | Detects deteriorating or anomalous lab value trajectories over time |
-| 🔬 **Second Opinion AI** | Evidence-backed differential diagnoses with explicit confidence scores |
-| 🔐 **Blockchain Audit Trail** | Every clinical action is immutably logged for compliance and accountability |
-| 👥 **Multi-Patient Retrieval** | Disease queries return a ranked list of all matching patients to choose from |
-| 📊 **Clinical Dashboard** | Structured view: profile · diagnosis · medications · lab history · visit log |
-| 🤝 **Patient-Side Intelligence** | Patients receive structured summaries and recommendations from their own reports |
-| 🗂️ **PDF + JSON Support** | Works with structured JSON datasets and scanned PDF case sheets via OCR |
-| 🔒 **On-Device Processing** | All embeddings run locally — no patient data leaves your infrastructure |
-
----
-
-## 🛠️ Tech Stack
-
-| Layer | Technology | Purpose |
-|---|---|---|
-| **Frontend / UI** | [Streamlit](https://streamlit.io/) | Clinical dashboard, search interface, and patient selection UI |
-| **Embeddings** | [Sentence Transformers](https://sbert.net/) `all-MiniLM-L6-v2` | Semantic vector representations for patients and queries |
-| **Vector Store** | [FAISS](https://faiss.ai/) | High-speed approximate nearest-neighbor similarity search |
-| **Agent Orchestration** | Custom Multi-Agent Pipeline | 7 specialized agents coordinating analysis, triage, and insight generation |
-| **Drug Safety** | Drug Interaction Agent | Cross-reference layer on active prescriptions |
-| **Document Parsing** | OCR Ingestion Agent | Structured extraction from scanned PDFs and case sheets |
-| **Audit Layer** | Blockchain Trail | Immutable logging of all clinical access and actions |
-| **Data Layer** | JSON + PDF Medical Records | Profile · diagnosis · prescriptions · visits · labs |
-| **Language** | Python 3.10+ | Core application runtime |
-
----
-
-## ⚡ Installation & Setup
-
-### Prerequisites
-
-- Python **3.10** or higher
-- `git` installed
-- Your JSON medical dataset file
-
-### 1. Clone the Repository
-
-```bash
-git clone https://github.com/shreyashgautam/clinsight-ai.git
-cd clinsight-ai
-```
-
-### 2. Create a Virtual Environment
-
-
-```bash
-python -m venv venv
-
-# macOS / Linux
-source venv/bin/activate
-
-# Windows
-venv\Scripts\activate
-```
-
-### 3. Install Dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
-### 4. Add Your Dataset
-
-```
-clinsight-ai/
-└── data/
-    ├── patients.json        ← structured patient records
-    └── case_sheets/         ← scanned PDFs (optional, for OCR agent)
-```
-
-> 📌 See `data/sample_patients.json` for the expected record schema.
-
-### 5. Configure Environment
-
-```bash
-cp .env.example .env
-```
-
-Edit `.env` to set your dataset path, blockchain node config, and any custom values.
-
----
-
-## ▶️ How to Run
-
-```bash
-streamlit run app.py
-```
-
-The app launches at **`http://localhost:8501`** in your browser.
-
-**On first launch:**
-1. The system automatically **ingests and indexes** all patient records from your dataset
-2. The OCR agent processes any PDF case sheets in `data/case_sheets/`
-3. Embeddings are generated once and **cached** for subsequent runs
-4. The full 7-agent search interface is ready as soon as indexing completes
-
----
-
-## 💬 Example Queries
-
-```
-👤 Patient Name Search
-→ "Arjun Sharma"
-→ "Priya Mehta"
-
-Returns: 60-second dashboard — profile, diagnosis, medications,
-         drug interaction alerts, lab trends, second opinion.
-
-🦠 Disease / Condition Search
-→ "Type 2 Diabetes"
-→ "hypertension"
-→ "iron deficiency anemia"
-
-Returns: Ranked list of matching patients.
-         Select any to view their full clinical brief.
-
-🔬 Complex Semantic Search
-→ "fatigue history with iron deficiency"
-→ "post-surgical patient with abnormal creatinine"
-
-Returns: Semantically matched patients — even if the exact
-         words don't appear anywhere in the record.
-```
-
----
-
-## 📁 Project Structure
-
-```
-clinsight-ai/
+```text
+ClinSight-main/
 │
-├── app.py                      # Streamlit UI — search, dashboard, patient selection
-├── rag_pipeline.py             # RAG logic — ingestion, embedding, FAISS, retrieval
-├── agents/
-│   ├── analysis_agent.py       # Patient history structuring
-│   ├── triage_agent.py         # High-risk detection and alerting
-│   ├── drug_interaction.py     # Prescription cross-reference
-│   ├── lab_trend_agent.py      # Lab value trajectory analysis
-│   ├── second_opinion.py       # Evidence-backed differential generation
-│   └── ocr_agent.py            # PDF case sheet ingestion
-├── insight_engine.py           # Orchestrates all 7 agents → clinical brief
-├── blockchain/
-│   └── audit_trail.py          # Immutable clinical action logging
-├── data/
-│   ├── patients.json           # Medical records dataset
-│   ├── sample_patients.json    # Example schema for reference
-│   └── case_sheets/            # PDF inputs for OCR ingestion
-├── requirements.txt
-├── .env.example
-├── .gitignore
-└── README.md
+├── README.md
+├── Agent Flow.html
+│
+├── backend1/                      # Node.js / Express backend
+│   ├── server.js                  # Entry point
+│   ├── app.js                     # Express app config
+│   ├── package.json
+│   ├── .env.example
+│   │
+│   ├── routes/                    # REST API routes
+│   ├── agents/                    # 10 specialized agent modules
+│   ├── rag/                       # Patient context + vector store
+│   ├── tools/                     # Deterministic patient tools
+│   ├── blockchain/                # Hash-linked audit ledger
+│   ├── data/                      # Case-sheet JSON + guidelines
+│   ├── dataset_output/            # Generated dataset (patients/visits/labs)
+│   ├── postman/                   # API collection for testing
+│   └── tests/
+│
+├── clinsight_flutter_fixed/       # Flutter client
+│   └── lib/
+│       ├── main.dart
+│       ├── models/
+│       ├── screens/
+│       ├── services/
+│       ├── state/
+│       ├── theme/
+│       └── widgets/
+│
+├── voice2/                        # Voice service
+│
+└── v0-hackathon-development-order/ # Next.js prototype UI
+```
+
+<details>
+<summary><b>📂 Full agent module listing</b></summary>
+
+```text
+backend1/agents/
+├── analysisAgent.js        # Clinical insight generation (Gemini)
+├── ingestionAgent.js       # Merges OCR data into patient records
+├── nutritionAgent.js       # Diet/condition analysis (Groq)
+├── ocrAgent.js             # Document → structured data (Tesseract + Gemini)
+├── orchestratorAgent.js    # Coordinates the full intake pipeline
+├── ragDoctorAgent.js       # Patient-grounded Q&A (Vectra + Groq)
+├── receptionistAgent.js    # General conversational assistant (Groq)
+├── secondOpinionAgent.js   # Diagnosis review (Claude)
+├── transferAgent.js        # Specialist handoff packet builder
+└── triageAgent.js          # Urgency/priority routing (Groq)
+```
+
+</details>
+
+---
+
+## 🚀 Backend Startup Flow
+
+```mermaid
+sequenceDiagram
+    participant Node as server.js
+    participant App as app.js
+    participant Socket as Socket.IO
+    participant Audit as blockchain/logger
+    participant Vector as vectorStore
+    participant Files as data/*.json
+
+    Node->>App: createApp()
+    App-->>Node: Express app
+    Node->>Node: create HTTP server
+    Node->>Socket: attach Socket.IO
+    Node->>Audit: blockchain.init(io)
+    Node->>Vector: initIndex()
+    Vector->>Vector: create Vectra index if absent
+    Node->>Files: find patient_*.json
+    loop each patient file
+        Files-->>Node: JSON patient
+        Node->>Vector: indexPatient(patient)
+        Vector->>Vector: vectorize visits/allergies
+        Vector-->>Node: indexed
+    end
+    Node->>Node: server.listen(PORT)
+```
+
+Default backend port: **`4000`**
+
+---
+
+## 📱 Flutter Client Architecture
+
+```mermaid
+flowchart TB
+    Main["main.dart"]
+    State["AppState\nChangeNotifier / Provider"]
+    API["ClinSightApiService"]
+    Client["ApiClient"]
+    HTTP["package:http"]
+    Backend["Node / Express"]
+
+    Screens["Screens"]
+    Models["Patient models"]
+    Widgets["Reusable widgets"]
+    Theme["Theme"]
+
+    Main --> State
+    Main --> Theme
+    State --> Screens
+    Screens --> State
+    State --> API
+    API --> Client
+    Client --> HTTP
+    HTTP --> Backend
+    Models --> Screens
+    Widgets --> Screens
+```
+
+| File | Responsibility |
+|---|---|
+| `main.dart` | App entry point & provider setup |
+| `app_state.dart` | Central UI/application state |
+| `api_client.dart` | HTTP GET/POST/multipart wrapper + error handling |
+| `clinsight_api_service.dart` | Typed wrappers around backend endpoints |
+| `patient_models.dart` | Dart-side data models |
+| `dashboard_screen.dart` | Dashboard |
+| `patients_screen.dart` | Patient list/search |
+| `patient_detail_screen.dart` | Patient details |
+| `assistant_screen.dart` | AI assistant/chat |
+| `main_shell.dart` | Main navigation shell |
+
+**Typical request flow:**
+
+```mermaid
+sequenceDiagram
+    participant UI as Flutter Screen
+    participant State as AppState
+    participant Service as ClinSightApiService
+    participant Client as ApiClient
+    participant API as Express
+    participant Tool as Agent/Tool
+
+    UI->>State: user action
+    State->>Service: call method
+    Service->>Client: GET/POST
+    Client->>API: HTTP request + JSON
+    API->>Tool: execute business logic
+    Tool-->>API: structured result
+    API-->>Client: JSON response
+    Client-->>Service: decoded response
+    Service-->>State: Dart model/map
+    State-->>UI: notifyListeners()
+    UI-->>UI: rebuild
 ```
 
 ---
 
-## 👥 Team
+## 🗄️ Data Architecture
 
-Built over 48 hours at VIT by **Team Fanatics** 🔥
+ClinSight currently supports **three** parallel data paths:
 
-<table>
-  <tr>
-    <td align="center"><b>Dipsita Rout</b><br/><a href="https://www.linkedin.com/in/dipsita-rout/">LinkedIn ↗</a></td>
-    <td align="center"><b>Meghna Mandawra</b><br/><a href="https://www.linkedin.com/in/meghna-mandawra-b4083228b/">LinkedIn ↗</a></td>
-    <td align="center"><b>Riddhi Arora</b><br/><a href="https://www.linkedin.com/in/itsriddhiarora/">LinkedIn ↗</a></td>
-    <td align="center"><b>Shreeya Kollipara</b><br/><a href="https://www.linkedin.com/in/shreeya-kollipara-47a42128b/">LinkedIn ↗</a></td>
-    <td align="center"><b>Shreyash Gautam</b><br/><a href="https://www.linkedin.com/in/shreyash-gautam/">LinkedIn ↗</a></td>
-  </tr>
-</table>
+```mermaid
+flowchart LR
+    Case["Small case-sheet JSON\npatient_P001.json"]
+    Dataset["Generated dataset\npatients.json / visits.json\nmedications.json / labs.json"]
+    Mongo["Optional MongoDB"]
+
+    Tools["patientTools.js"]
+    Context["patientContext.js"]
+    Routes["REST routes"]
+    Agents["Agents / RAG"]
+
+    Case --> Tools
+    Dataset --> Tools
+    Dataset --> Context
+    Mongo --> Context
+
+    Tools --> Routes
+    Context --> Agents
+    Routes --> Agents
+```
+
+| Source | Contains | Notes |
+|---|---|---|
+| **Case-sheet JSON** (`data/patient_P00X.json`) | Identity, diagnoses, allergies, meds, visits, labs, flags | Indexed into Vectra at backend startup |
+| **Generated dataset** (`dataset_output/`) | ~150 patients · 1,103 visits · 829 medications · 3,798 labs (**~5,880 total records**, not 5,880 patients) | Used for bulk/dashboard views |
+| **Optional MongoDB** | Normalized `patients`, `visits`, `medications`, `labs`, `alerts` collections | Falls back to file-based data if `mongodb` package/URI unavailable. `/api/patients` and `/api/dashboard/data` strictly require `MONGO_URI` |
+
+All shapes get normalized into one common bundle by `rag/patientContext.js`, so the rest of the app never has to care where the data came from.
 
 ---
 
-## 🚀 Future Roadmap
+## 🔎 Retrieval-Augmented Generation (RAG)
 
-- [ ] 🌐 **Multi-language Support** — Hindi, Tamil, and other regional languages
-- [ ] 📈 **Health Trend Visualization** — Charts for vitals, labs, and visit frequency over time
-- [ ] 🔐 **Role-Based Access Control** — Separate doctor, nurse, and admin access levels
-- [ ] ☁️ **Persistent FAISS Index** — Save and reload the index across sessions without re-ingestion
-- [ ] 📊 **Confidence Scores on Search** — Retrieval relevance scores shown alongside each result
-- [ ] 🔔 **Real-Time Critical Alerts** — Auto-surface deteriorating patients based on vitals or interactions
-- [ ] 🐳 **Docker Deployment** — One-command containerized setup for hospital IT environments
-- [ ] 🧪 **RAGAS Evaluation** — Faithfulness and relevance scoring for all retrieved insights
-- [ ] 🔄 **Streaming Summaries** — Token-by-token streaming for faster perceived response time
-- [ ] 📱 **Mobile-First Clinical View** — Lightweight dashboard for ward-round tablet use
+- **Vector store:** Vectra LocalIndex (local, filesystem-based)
+- **Embeddings:** a **custom 128-dimensional hashed word-frequency vectorizer** — *not* a Sentence-Transformer model
+- **Filtering:** results are filtered by `patientId` so one patient's context never leaks into another's answer
+- **Generation:** retrieved context + query → Groq/Llama
+
+```text
+Doctor question
+      ↓
+Vectorize query (same hashed function as indexing)
+      ↓
+Similarity search in Vectra
+      ↓
+Filter by patient ID
+      ↓
+Build context prompt
+      ↓
+Groq/Llama generates grounded answer
+```
+
+If retrieval returns nothing useful, the system falls back to deterministic patient summaries or the Analysis Agent.
 
 ---
 
-## 📄 License
+## 🤖 Specialized Agents
 
-MIT License — see [LICENSE](LICENSE) for details.
+```mermaid
+flowchart TB
+    Query["Doctor / System Request"]
+
+    Query --> RAG["RAG Doctor Agent"]
+    Query --> Analysis["Clinical Analysis Agent"]
+    Query --> Triage["Triage Agent"]
+    Query --> Reception["Receptionist Agent"]
+    Query --> Nutrition["Nutrition Agent"]
+    Query --> Second["Second Opinion Agent"]
+    Query --> OCR["OCR Agent"]
+    Query --> Ingestion["Ingestion Agent"]
+    Query --> Transfer["Transfer Agent"]
+    Query --> Orchestrator["Orchestrator Agent"]
+
+    Analysis --> Gemini["Gemini"]
+    OCR --> Tesseract["Tesseract"]
+    OCR --> Gemini
+    RAG --> Groq["Groq / Llama"]
+    Triage --> Groq
+    Reception --> Groq
+    Nutrition --> Groq
+    Second --> Claude["Anthropic Claude"]
+    Transfer --> Analysis
+    Orchestrator --> OCR
+    Orchestrator --> Ingestion
+    Orchestrator --> Analysis
+    Orchestrator --> Triage
+    Orchestrator --> Transfer
+```
+
+| Agent | Purpose | Model |
+|---|---|---|
+| 🧬 **Analysis** | Physician-facing clinical insight summary (labs trends, drug interactions, allergy history) | Gemini |
+| 🚦 **Triage** | Decides specialist need + urgency (`CRITICAL`/`HIGH`/`MEDIUM`/`LOW`), constrained JSON output, low temperature | Groq/Llama |
+| 🩺 **Second Opinion** | Reviews a proposed diagnosis against existing patient evidence | Claude (`claude-haiku-4-5`) |
+| 🥗 **Nutrition** | Diet analysis conditioned on patient diagnoses | Groq/Llama |
+| ☎️ **Receptionist** | General conversational hospital-reception assistant | Groq/Llama |
+| 📄 **OCR** | Converts uploaded documents to structured medical JSON via Tesseract + Gemini | Tesseract + Gemini |
+| 📥 **Ingestion** | Merges structured OCR output into a patient's case-sheet, deduplicated | — (deterministic) |
+| 🔁 **Transfer** | Builds a structured specialist handoff packet (flags, overdue tests, interactions, brief) | — (deterministic) |
+| 🧭 **Orchestrator** | Workflow coordinator chaining OCR → Ingestion → Analysis → Triage → optional Transfer | — (coordinator) |
+| 🔍 **RAG Doctor** | Answers natural-language patient questions grounded in retrieved context | Groq/Llama |
+
+**Full document intake pipeline** (`/api/agent/intake`):
+
+```mermaid
+sequenceDiagram
+    participant User as Doctor / Staff
+    participant API as Express
+    participant OCR as OCR Agent
+    participant Ingest as Ingestion Agent
+    participant Analysis as Analysis Agent
+    participant Triage as Triage Agent
+    participant Transfer as Transfer Agent
+    participant Audit as Audit Ledger
+
+    User->>API: Upload document + patientId
+    API->>OCR: processUploadedDocument()
+    OCR-->>API: structured medical data
+    API->>Ingest: runIngestionAgent()
+    Ingest-->>API: updated patient record
+    API->>Analysis: runAnalysisAgent()
+    Analysis-->>API: clinical insights
+    API->>Triage: runTriageAgent()
+    Triage-->>API: triage recommendation
+    opt Transfer requested
+        API->>Transfer: runTransferAgent()
+        Transfer-->>API: transfer packet
+    end
+    API->>Audit: log ORCHESTRATOR_RUN
+    API-->>User: combined pipeline result
+```
+
+> 💡 **Not everything is AI.** Drug interaction lookup, patient retrieval, lab-trend calculation, and guideline lookup are plain deterministic functions in `tools/patientTools.js`. LLMs are only invoked where natural-language interpretation genuinely adds value.
+
+---
+
+## 🔗 Audit Ledger (Blockchain-Style Hash Chain)
+
+> This is a **custom in-memory SHA-256 hash-linked ledger** — not a public/decentralized blockchain.
+
+```text
+┌───────────────┐        ┌───────────────┐        ┌───────────────┐
+│ Block 0       │───────▶│ Block 1       │───────▶│ Block 2       │
+│ hash = A      │ prev=A │ prev = A      │ prev=B │ prev = B      │
+│ (genesis)     │        │ hash = B      │        │ hash = C      │
+└───────────────┘        └───────────────┘        └───────────────┘
+```
+
+Each block stores `index`, `timestamp`, `action`, `actorId`, `patientId`, `details`, `previousHash`, and `hash`. If any block is altered, its hash no longer matches the next block's `previousHash` — tamper detection via `GET /api/blockchain/verify`. New blocks are broadcast live over **Socket.IO** (`new_block` event) so a dashboard can watch the ledger update in near real time.
+
+---
+
+## 🌐 REST API Reference
+
+**Base URL (local):** `http://localhost:4000` · **Prefix:** `/api`
+
+<details open>
+<summary><b>🔐 Authentication</b></summary>
+
+| Method | Endpoint | Purpose |
+|---|---|---|
+| `POST` | `/api/auth/login` | Login |
+| `POST` | `/api/auth/register` | Register doctor/patient |
+
+</details>
+
+<details open>
+<summary><b>🧑‍⚕️ Patient / Dashboard</b></summary>
+
+| Method | Endpoint | Purpose |
+|---|---|---|
+| `GET` | `/api/patients` | Patient list (MongoDB-backed) |
+| `GET` | `/api/dashboard/data` | Dashboard aggregates |
+| `GET` | `/api/patient/:id` | Full patient record |
+| `GET` | `/api/patient/:id/brief` | Consultation brief |
+| `GET` | `/api/patient/:id/labs/:testName` | Lab trend |
+| `GET` | `/api/patient/:id/flags` | Clinical flags |
+| `GET` | `/api/patient/:id/overdue-tests` | Overdue tests |
+
+</details>
+
+<details>
+<summary><b>♻️ Compatibility <code>/records</code> routes</b></summary>
+
+| Method | Endpoint | Purpose |
+|---|---|---|
+| `GET` | `/api/records/:id` | Record view |
+| `GET` | `/api/records/:id/brief` | Brief |
+| `GET` | `/api/records/:id/labs` | Flattened labs |
+| `GET` | `/api/records/:id/flags` | Normalized flags |
+| `GET` | `/api/records/:id/overdue-tests` | Normalized overdue tests |
+| `POST` | `/api/records/search` | Search record |
+| `POST` | `/api/patient/:id/search` | Patient history search |
+
+</details>
+
+<details open>
+<summary><b>💊 Drug / Pharmacy</b></summary>
+
+| Method | Endpoint | Purpose |
+|---|---|---|
+| `POST` | `/api/drugs/check` | Check medication interactions |
+| `GET` | `/api/pharmacy/:medicineName` | Pharmacy search links |
+
+</details>
+
+<details open>
+<summary><b>🧠 AI Agents</b></summary>
+
+| Method | Endpoint | Purpose |
+|---|---|---|
+| `POST` | `/api/agent/query` | Main natural-language query |
+| `POST` | `/api/agent/rag-summary` | RAG patient summary |
+| `POST` | `/api/agent/rag-query` | Patient-specific RAG question |
+| `POST` | `/api/agent/second-opinion` | Second opinion |
+| `POST` | `/api/agent/triage` | Triage |
+| `POST` | `/api/agent/receptionist` | Receptionist |
+| `POST` | `/api/agent/nutrition` | Nutrition analysis |
+| `POST` | `/api/agent/ocr` | OCR upload |
+| `POST` | `/api/agent/ingest` | Structured-data ingestion |
+| `POST` | `/api/agent/intake` | Full OCR → ingestion → analysis → triage pipeline |
+| `POST` | `/api/agent/transfer` | Specialist transfer |
+| `POST` | `/api/referral` | Specialist referral |
+
+</details>
+
+<details open>
+<summary><b>🔗 Audit / Emergency</b></summary>
+
+| Method | Endpoint | Purpose |
+|---|---|---|
+| `GET` | `/api/blockchain/chain` | Current audit chain |
+| `GET` | `/api/blockchain/verify` | Verify chain integrity |
+| `GET` | `/api/blockchain/export` | Export audit CSV |
+| `POST` | `/api/emergency` | Log emergency escalation |
+
+</details>
+
+<details>
+<summary><b>💬 WhatsApp</b></summary>
+
+| Method | Endpoint | Purpose |
+|---|---|---|
+| `POST` | `/api/whatsapp/incoming` | Twilio webhook |
+
+</details>
+
+**Example — asking a clinical question:**
+
+```http
+POST /api/agent/query
+Content-Type: application/json
+
+{
+  "patientId": "P001",
+  "query": "What are the major issues?"
+}
+```
+
+```json
+{
+  "response": "...",
+  "answer": "...",
+  "source": "rag",
+  "rag_hits": []
+}
+```
+
+---
+
+## 🔑 Environment Variables
+
+```bash
+# LLM providers
+ANTHROPIC_API_KEY=
+GROQ_API_KEY=
+GEMINI_API_KEY=
+OPENAI_API_KEY=
+
+# WhatsApp (Twilio)
+TWILIO_ACCOUNT_SID=
+TWILIO_AUTH_TOKEN=
+TWILIO_WHATSAPP_FROM=
+
+# Server
+PORT=4000
+FRONTEND_URL=
+
+# Optional
+MONGO_URI=
+DATASET_DIR=
+```
+
+> ⚠️ Never commit real API keys. Copy `.env.example` → `.env` and fill in only what your workflows need.
+
+---
+
+## 🛠️ Getting Started
+
+### Backend
+
+```bash
+cd backend1
+npm install
+cp .env.example .env      # then fill in your keys
+npm run dev                # or: npm start
+```
+
+Runs at `http://localhost:4000` — health check:
+
+```bash
+curl http://localhost:4000/
+```
+
+### Flutter Client
+
+```bash
+flutter doctor             # verify your setup
+cd clinsight_flutter_fixed
+flutter pub get
+flutter run
+```
+
+Point the app at a custom backend:
+
+```bash
+flutter run --dart-define=API_BASE_URL=http://YOUR_BACKEND_HOST:4000
+```
+
+> 📱 On a physical phone, `localhost` refers to the phone itself — use your machine's LAN IP or a deployed backend URL instead.
+
+### Local Topology
+
+```text
+┌─────────────────────────────┐
+│ Flutter app                 │
+│ http://localhost / device   │
+└──────────────┬──────────────┘
+               │ HTTP
+               ▼
+┌─────────────────────────────┐
+│ Node / Express              │
+│ localhost:4000              │
+└──────────────┬──────────────┘
+               │
+        ┌──────┼──────┐
+        ▼      ▼      ▼
+      JSON   Vectra  LLM APIs
+```
+
+---
+
+## ✅ Testing
+
+```bash
+cd backend1
+npm test
+```
+
+Runs Node's built-in test runner against `backend1/tests/`. A ready-to-import **Postman collection** is also included under `backend1/postman/`.
+
+---
+
+## ⚠️ Current Limitations
+
+This is a **hackathon/demo architecture** — several parts are intentionally simplified:
+
+- 🔎 **Retrieval:** lightweight hashed bag-of-words, not transformer-based semantic embeddings
+- 💾 **Vector persistence:** Vectra index lives on the local backend filesystem
+- 🔗 **Audit ledger:** in-memory, not persisted
+- 🔐 **Auth/Authorization:** demo-grade; fine-grained RBAC not fully enforced
+- 📊 **Evaluation:** no accuracy/quality benchmark suite
+- 🏥 **Clinical validation:** decision-support only — **not** an autonomous clinical decision system
+- ⚙️ **Scale:** built for demonstration, not high-availability hospital deployment
+
+---
+
+## 🗺️ Production Roadmap
+
+```mermaid
+flowchart TB
+    Client["Flutter / Web Client"]
+    Gateway["API Gateway"]
+    Auth["Identity + RBAC"]
+    Backend["Clinical Orchestration Service"]
+    DB["Encrypted Clinical DB"]
+    Vector["Production Vector DB"]
+    Queue["Job Queue"]
+    LLM["Model Gateway"]
+    Audit["Persistent Tamper-Evident Audit Store"]
+    Observability["Logs + Metrics + Tracing"]
+
+    Client --> Gateway
+    Gateway --> Auth
+    Auth --> Backend
+    Backend --> DB
+    Backend --> Vector
+    Backend --> Queue
+    Backend --> LLM
+    Backend --> Audit
+    Backend --> Observability
+```
+
+Planned direction: strict-schema database, real RBAC, persistent vector DB, real embedding model, background OCR queues, a model gateway with retries/fallback, prompt versioning, PHI encryption, persistent audit storage, automated evaluation, monitoring/tracing, rate limiting, and clinical safety review.
+
+---
+
+## ❓ FAQ / Cheat Sheet
+
+<details>
+<summary><b>What is ClinSight?</b></summary>
+An agentic clinical-intelligence platform giving doctors patient-specific summaries, retrieval, risk flags, lab trends, drug-interaction checks, document ingestion, triage, and specialist handoff.
+</details>
+
+<details>
+<summary><b>What's the architecture, one line?</b></summary>
+Flutter → Node/Express → deterministic tools + RAG + specialized agents → LLM providers → structured response, with a hash-linked audit ledger and Socket.IO updates running alongside.
+</details>
+
+<details>
+<summary><b>Which embedding model / vector DB?</b></summary>
+No Sentence-Transformer model — a custom 128-dim hashed word-frequency vectorizer, stored in <b>Vectra LocalIndex</b>.
+</details>
+
+<details>
+<summary><b>Which LLMs, and why so many?</b></summary>
+Gemini (analysis/OCR structuring), Groq/Llama (RAG/triage/conversation), Claude (second opinion). Different workflows need different latency/reasoning/extraction trade-offs, so provider choice is isolated per agent.
+</details>
+
+<details>
+<summary><b>Is everything AI-driven?</b></summary>
+No — drug interactions, patient retrieval, lab trends, and guideline lookup are deterministic. LLMs are used only where natural-language reasoning adds real value.
+</details>
+
+<details>
+<summary><b>What happens if an LLM or RAG call fails?</b></summary>
+Agents catch errors and fall back to deterministic summaries or return a structured error. Triage additionally falls back to "manual review required."
+</details>
+
+<details>
+<summary><b>Did the system actually hit 92% accuracy?</b></summary>
+No reliable evaluation pipeline in the repo establishes that figure — it traces back to a clinical SpO₂ guideline threshold, not a measured accuracy score.
+</details>
+
+---
+
+## 📌 Project Status
+
+ClinSight is a **hackathon/prototype clinical-intelligence platform**. It demonstrates the architecture and engineering ideas behind an agentic healthcare assistant, but it should **not** be deployed as an autonomous clinical decision-making system without substantial security, privacy, reliability, evaluation, and clinical-validation work.
+
+### Related Codebases
+
+- ClinSight → https://github.com/dipsitarout/ClinSight
+- GLITCHCON Team 09 → https://github.com/sseth345/GLITCHCON_team09
+
+### License
+
+See the repository for applicable project/license information.
 
 ---
 
 <div align="center">
 
-<br/>
-
-**Built in 48 hours to make clinical intelligence accessible to every doctor.**
-
-*ClinSight AI — Domain Winners, GLITCHCON 2.0 · VIT · March 2026*
-
-<br/>
-
-[![Live Demo](https://img.shields.io/badge/🚀%20Live%20Demo-clinsight.ai-00c853?style=for-the-badge)](https://lnkd.in/gYH92mzC)
-[![GitHub](https://img.shields.io/badge/⭐%20Star%20on%20GitHub-Source%20Code-24292e?style=for-the-badge&logo=github)](https://lnkd.in/gXkV47Ef)
-
-<br/>
-
-*If ClinSight AI helps your workflow, give it a ⭐ on GitHub — it helps other clinicians and developers find the project.*
+*Built with 🩺 for smarter, safer clinical workflows.*
 
 </div>
